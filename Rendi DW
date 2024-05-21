@@ -1,0 +1,62 @@
+Menggunakan Power BI untuk menjalankan kueri MDX (Multidimensional Expressions) pada OLAP (Online Analytical Processing) cube memerlukan beberapa langkah spesifik. MDX adalah bahasa kueri yang digunakan untuk bekerja dengan data multidimensional di dalam OLAP cubes, seperti yang digunakan dalam SQL Server Analysis Services (SSAS).
+
+Berikut adalah panduan untuk menulis dan menjalankan kueri MDX di Power BI:
+
+### Langkah-Langkah Menjalankan Kueri MDX di Power BI
+
+1. **Buka Power BI Desktop:**
+   - Pastikan Power BI Desktop sudah terinstall di komputer Anda.
+
+2. **Koneksi ke SSAS OLAP Cube:**
+   - Klik `Get Data` pada tab `Home`.
+   - Pilih `SQL Server Analysis Services Database`.
+   - Masukkan nama server SSAS dan pilih mode koneksi `Connect live`.
+   - Pilih database yang ingin Anda gunakan dan pilih cube yang relevan.
+
+3. **Buat Kueri MDX di Power BI:**
+   - Setelah terhubung ke OLAP cube, Anda akan berada di tab `Data` atau `Report`.
+   - Untuk menulis kueri MDX kustom, buka tab `Modeling` dan pilih `New Table`.
+   - Anda akan mendapatkan editor DAX, tetapi untuk MDX, Anda perlu sedikit trik:
+     - Buat kueri DAX yang mengembalikan tabel hasil kueri MDX. Sayangnya, Power BI secara langsung tidak mendukung kueri MDX di dalam editor, tetapi Anda bisa menggunakan `Query Editor` dengan `Advanced Editor`.
+
+4. **Advanced Editor di Query Editor:**
+   - Klik `Home` -> `Transform Data` untuk membuka Query Editor.
+   - Klik `Advanced Editor`.
+   - Masukkan kueri MDX dalam format `OLE DB` atau gunakan langkah M query untuk menjalankan kueri MDX. Berikut adalah contoh format M query untuk menjalankan MDX:
+
+```m
+let
+    Source = AnalysisServices.Database("ServerName", "DatabaseName", [Query="YOUR_MDX_QUERY"])
+in
+    Source
+```
+
+Contoh kueri MDX sederhana:
+```mdx
+SELECT 
+    { [Measures].[Sales Amount], [Measures].[Order Quantity] } ON COLUMNS,
+    { [Date].[Calendar Year].[CY 2020], [Date].[Calendar Year].[CY 2021] } ON ROWS
+FROM 
+    [Sales]
+WHERE 
+    ( [Geography].[Country].[United States] )
+```
+
+Dalam langkah di atas, gantikan `"ServerName"` dan `"DatabaseName"` dengan nama server dan database Anda, dan `"YOUR_MDX_QUERY"` dengan kueri MDX Anda.
+
+5. **Load Data:**
+   - Klik `Close & Apply` untuk memuat data ke Power BI.
+   - Anda sekarang dapat menggunakan hasil kueri MDX dalam laporan Power BI.
+
+### Tips Tambahan:
+
+- **Filtering dan Slicing:**
+  - Anda dapat menambahkan filter dan slicer dalam kueri MDX untuk mendapatkan subset data yang diinginkan.
+
+- **Testing MDX Queries:**
+  - Sebelum menjalankan di Power BI, pastikan kueri MDX Anda berjalan dengan baik di SQL Server Management Studio (SSMS) atau alat kueri OLAP lainnya.
+
+- **Documentation:**
+  - Pelajari lebih lanjut tentang MDX dari dokumentasi resmi Microsoft atau sumber lain untuk memperdalam pemahaman Anda tentang syntax dan fungsi MDX.
+
+Dengan mengikuti langkah-langkah di atas, Anda dapat menulis dan menjalankan kueri MDX pada OLAP cube di Power BI, sehingga memungkinkan Anda untuk memanfaatkan analisis data multidimensional secara lebih efektif.
